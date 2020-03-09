@@ -1,0 +1,5 @@
+ResultTable(results=
+                                reconstructor              test_data                     measure_values                                                                                                                                        misc
+task_ind sub_task_ind                                                                                                                                                                                                                              
+0        0             IRadonMapReconstructor  validation part 0:320  mean: {psnr: 25.41, ssim: 0.8009}  {'hp_choice': {'scales': 5, 'skip_channels': 4, 'batch_size': 64, 'epochs': 1000, 'fully_learned': True, 'lr': 0.01, 'use_sigmoid': True}}
+)

@@ -1,0 +1,9 @@
+{
+    "scales": 5,
+    "skip_channels": 4,
+    "batch_size": 2,
+    "epochs": 150,
+    "fully_learned": true,
+    "lr": 0.01,
+    "use_sigmoid": false
+}

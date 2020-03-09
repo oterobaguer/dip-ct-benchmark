@@ -1,0 +1,24 @@
+ResultTable(results=
+                         reconstructor              test_data                     measure_values                                         misc
+task_ind sub_task_ind                                                                                                                        
+0        0             TVReconstructor  validation part 0:100  mean: {psnr: 20.74, ssim: 0.5109}             {'hp_choice': {'gamma': 0.0001}}
+         1             TVReconstructor  validation part 0:100  mean: {psnr: 20.95, ssim: 0.5201}  {'hp_choice': {'gamma': 0.000162377673919}}
+         2             TVReconstructor  validation part 0:100  mean: {psnr: 21.25, ssim: 0.5319}  {'hp_choice': {'gamma': 0.000263665089873}}
+         3             TVReconstructor  validation part 0:100  mean: {psnr: 21.64, ssim: 0.5465}  {'hp_choice': {'gamma': 0.000428133239872}}
+         4             TVReconstructor  validation part 0:100  mean: {psnr: 22.13, ssim: 0.5637}  {'hp_choice': {'gamma': 0.000695192796178}}
+         5             TVReconstructor  validation part 0:100  mean: {psnr: 22.67, ssim: 0.5817}   {'hp_choice': {'gamma': 0.00112883789168}}
+         6             TVReconstructor  validation part 0:100  mean: {psnr: 23.19, ssim: 0.5982}   {'hp_choice': {'gamma': 0.00183298071083}}
+         7             TVReconstructor  validation part 0:100  mean: {psnr: 23.62, ssim: 0.6109}   {'hp_choice': {'gamma': 0.00297635144163}}
+         8             TVReconstructor  validation part 0:100  mean: {psnr: 23.94, ssim: 0.6193}   {'hp_choice': {'gamma': 0.00483293023857}}
+         9             TVReconstructor  validation part 0:100  mean: {psnr: 24.19, ssim: 0.6255}   {'hp_choice': {'gamma': 0.00784759970351}}
+         10            TVReconstructor  validation part 0:100  mean: {psnr: 24.45, ssim: 0.6327}     {'hp_choice': {'gamma': 0.012742749857}}
+         11            TVReconstructor  validation part 0:100   mean: {psnr: 24.83, ssim: 0.648}    {'hp_choice': {'gamma': 0.0206913808111}}
+         12            TVReconstructor  validation part 0:100    mean: {psnr: 25.46, ssim: 0.68}    {'hp_choice': {'gamma': 0.0335981828628}}
+         13            TVReconstructor  validation part 0:100  mean: {psnr: 26.37, ssim: 0.7342}    {'hp_choice': {'gamma': 0.0545559478117}}
+         14            TVReconstructor  validation part 0:100  mean: {psnr: 27.22, ssim: 0.7964}     {'hp_choice': {'gamma': 0.088586679041}}
+         15            TVReconstructor  validation part 0:100   mean: {psnr: 27.6, ssim: 0.8378}     {'hp_choice': {'gamma': 0.143844988829}}
+         16            TVReconstructor  validation part 0:100  mean: {psnr: 27.43, ssim: 0.8457}     {'hp_choice': {'gamma': 0.233572146909}}
+         17            TVReconstructor  validation part 0:100  mean: {psnr: 26.92, ssim: 0.8303}     {'hp_choice': {'gamma': 0.379269019073}}
+         18            TVReconstructor  validation part 0:100   mean: {psnr: 26.11, ssim: 0.793}     {'hp_choice': {'gamma': 0.615848211066}}
+         19            TVReconstructor  validation part 0:100     mean: {psnr: 25, ssim: 0.7311}                {'hp_choice': {'gamma': 1.0}}
+)

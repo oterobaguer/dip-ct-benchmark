@@ -1,0 +1,5 @@
+ResultTable(results=
+                                reconstructor        test_data                    measure_values misc
+task_ind sub_task_ind                                                                                
+0        0             LearnedGDReconstructor  test part 0:100  mean: {psnr: 30.3, ssim: 0.9162}   {}
+)

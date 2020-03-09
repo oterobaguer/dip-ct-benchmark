@@ -1,0 +1,8 @@
+install miniconda
+install python 3.6 (from conda)
+
+conda install pytorch torchvision cudatoolkit=10.1 -c pytorch -c defaults -c numba/label/dev
+conda install -c astra-toolbox/label/dev astra-toolbox
+
+pip install --upgrade https://github.com/odlgroup/odl/archive/master.zip
+pip install --upgrade https://github.com/jleuschn/dival/archive/master.zip

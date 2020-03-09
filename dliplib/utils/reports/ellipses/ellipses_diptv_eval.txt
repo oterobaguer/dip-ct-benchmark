@@ -1,0 +1,5 @@
+ResultTable(results=
+                      reconstructor        test_data                     measure_values misc
+task_ind sub_task_ind                                                                       
+0        0                 DIP + TV  test part 0:100  mean: {psnr: 28.94, ssim: 0.8855}   {}
+)

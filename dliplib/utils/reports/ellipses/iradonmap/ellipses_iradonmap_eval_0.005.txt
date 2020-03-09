@@ -1,0 +1,5 @@
+ResultTable(results=
+                                reconstructor  test_data                    measure_values misc
+task_ind sub_task_ind                                                                          
+0        0             IRadonMapReconstructor  test part  mean: {psnr: 21.4, ssim: 0.5333}   {}
+)

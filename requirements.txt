@@ -1,0 +1,12 @@
+torch
+torchvision
+tensorboard
+numpy
+matplotlib
+dival
+h5py
+requests
+scikit-image
+odl
+packaging
+openpyxl

@@ -1,0 +1,10 @@
+{
+    "batch_size": 1,
+    "epochs": 500,
+    "niter": 10,
+    "internal_ch": 32,
+    "lr": 0.001,
+    "lr_min": 0.001,
+    "init_fbp": true,
+    "init_frequency_scaling": 0.7
+}

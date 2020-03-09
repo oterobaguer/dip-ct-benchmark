@@ -1,0 +1,5 @@
+ResultTable(results=
+                              reconstructor               test_data                    measure_values                                                                                                                                            misc
+task_ind sub_task_ind                                                                                                                                                                                                                                
+0        0             FBPUNetReconstructor  validation part 0:3522  mean: {psnr: 36.8, ssim: 0.8826}  {'hp_choice': {'scales': 5, 'skip_channels': 4, 'batch_size': 32, 'epochs': 250, 'lr': 0.01, 'filter_type': 'Hann', 'frequency_scaling': 1.0}}
+)

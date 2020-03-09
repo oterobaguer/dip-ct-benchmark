@@ -1,0 +1,5 @@
+ResultTable(results=
+                                reconstructor              test_data                     measure_values                                                                       misc
+task_ind sub_task_ind                                                                                                                                                             
+0        0             LearnedPDReconstructor  validation part 0:800  mean: {psnr: 32.03, ssim: 0.9351}  {'hp_choice': {'batch_size': 5, 'epochs': 200, 'niter': 10, 'lr': 0.001}}
+)

@@ -1,0 +1,5 @@
+ResultTable(results=
+                                reconstructor  test_data                     measure_values misc
+task_ind sub_task_ind                                                                           
+0        0             Learned PD (0.01 $\%$)  test part  mean: {psnr: 32.98, ssim: 0.7924}   {}
+)

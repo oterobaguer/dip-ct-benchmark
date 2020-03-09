@@ -1,0 +1,5 @@
+ResultTable(results=
+                             reconstructor  test_data                     measure_values misc
+task_ind sub_task_ind                                                                        
+0        0             FBP+UNet (1.0 $\%$)  test part  mean: {psnr: 34.45, ssim: 0.8212}   {}
+)

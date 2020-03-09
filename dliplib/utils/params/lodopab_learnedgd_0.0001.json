@@ -1,0 +1,9 @@
+{
+    "batch_size": 20,
+    "epochs": 5000,
+    "niter": 10,
+    "lr": 1e-05,
+    "init_frequency_scaling": 0.7,
+    "init_weight_xavier_normal": true,
+    "init_weight_gain": 0.001
+}

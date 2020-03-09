@@ -1,0 +1,7 @@
+{
+    "batch_size": 32,
+    "epochs": 50,
+    "niter": 10,
+    "lr": 0.001,
+    "lr_time_decay_rate": 3.2
+}

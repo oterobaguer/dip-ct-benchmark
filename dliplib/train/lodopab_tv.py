@@ -4,7 +4,8 @@ from dival import TaskTable
 from dival.measure import PSNR, SSIM
 
 from dliplib.utils import Params
-from dliplib.utils.helper import select_hyper_best_parameters, load_standard_dataset
+from dliplib.utils.helper import select_hyper_best_parameters
+from dliplib.utils.helper import load_standard_dataset
 from dliplib.reconstructors.tv import TVReconstructor
 from dliplib.utils.reports import save_results_table
 

@@ -7,6 +7,7 @@ from dliplib.utils.helper import ReorderedDataset
 class CachedDataset(Dataset):
     """Dataset that allows to use cached elements of a dataset
     """
+
     def __init__(self, dataset, space, cache_files, size_part=1.0):
         """
         Parameters
@@ -36,7 +37,8 @@ class CachedDataset(Dataset):
             for k in range(2):
                 if cache_files[part][k]:
                     try:
-                        self.data[part].append(np.load(cache_files[part][k], mmap_mode='r'))
+                        self.data[part].append(
+                            np.load(cache_files[part][k], mmap_mode='r'))
                     except FileNotFoundError:
                         raise FileNotFoundError(
                             "Did not find cache file '{}'".format(cache_files[part][k]))
@@ -47,7 +49,8 @@ class CachedDataset(Dataset):
         self.reorder_idx = (self.dataset.idx if isinstance(self.dataset, ReorderedDataset)
                             else None)
         self.train_len = max(1, int(size_part * self.dataset.train_len))
-        self.validation_len = max(1, int(size_part * self.dataset.validation_len))
+        self.validation_len = max(
+            1, int(size_part * self.dataset.validation_len))
 
         self.random_access = True
 
@@ -63,7 +66,7 @@ class CachedDataset(Dataset):
                                             part=part,
                                             out=(True, False))[0]
         else:
-        	first = self.data[part][0][data_idx]
+            first = self.data[part][0][data_idx]
         if self.data[part][1] is None:
             second = self.dataset.get_sample(index,
                                              part=part,
@@ -71,5 +74,3 @@ class CachedDataset(Dataset):
         else:
             second = self.data[part][1][data_idx]
         return first, second
-
-

@@ -130,39 +130,6 @@ class BaseLearnedReconstructor(LearnedReconstructor):
                        if self.use_cuda and torch.cuda.is_available() else
                        torch.device('cpu'))
 
-    def get_epochs(self):
-        return self.hyper_params['epochs']
-
-    def set_epochs(self, epochs):
-        self.hyper_params['epochs'] = epochs
-
-    epochs = property(get_epochs, set_epochs)
-
-    def get_batch_size(self):
-        return self.hyper_params['batch_size']
-
-    def set_batch_size(self, batch_size):
-        self.hyper_params['batch_size'] = batch_size
-
-    batch_size = property(get_batch_size, set_batch_size)
-
-    def get_lr(self):
-        return self.hyper_params['lr']
-
-    def set_lr(self, lr):
-        self.hyper_params['lr'] = lr
-
-    lr = property(get_lr, set_lr)
-
-    def get_normalize_by_opnorm(self):
-        return self.hyper_params['normalize_by_opnorm']
-
-    def set_normalize_by_opnorm(self, normalize_by_opnorm):
-        self.hyper_params['normalize_by_opnorm'] = normalize_by_opnorm
-
-    normalize_by_opnorm = property(get_normalize_by_opnorm,
-                                   set_normalize_by_opnorm)
-
     def eval(self, test_data):
         self.model.eval()
 
@@ -281,9 +248,9 @@ class BaseLearnedReconstructor(LearnedReconstructor):
                                                  / self.batch_size)
                                     + ceil(running_size / self.batch_size))
                             writer.add_scalar('loss/{}'.format(phase),
-                                              running_loss/running_size, step)
+                                              torch.tensor(running_loss/running_size), step)
                             writer.add_scalar('psnr/{}'.format(phase),
-                                              running_psnr/running_size, step)
+                                              torch.tensor(running_psnr/running_size), step)
 
                     if self.scheduler is not None and not schedule_every_batch:
                         self.scheduler.step()
@@ -329,7 +296,7 @@ class BaseLearnedReconstructor(LearnedReconstructor):
                         writer.add_images(
                             'validation_samples', torch.cat(val_images),
                             (epoch + 1) * (ceil(dataset_sizes['train'] /
-                                           self.batch_size)),
+                                                self.batch_size)),
                             dataformats='NCWH')
 
         print('Best val psnr: {:4f}'.format(best_psnr))

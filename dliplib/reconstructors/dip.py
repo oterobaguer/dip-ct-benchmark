@@ -1,9 +1,10 @@
 from warnings import warn
-
+from tqdm import tqdm
 import torch
 import numpy as np
 
 from torch.optim import Adam
+from torch.optim.lr_scheduler import StepLR
 from torch.nn import MSELoss
 
 from odl.contrib.torch import OperatorModule
@@ -52,7 +53,9 @@ class DeepImagePriorReconstructor(IterativeReconstructor):
            `doi:10.1109/CVPR.2018.00984
            <https://doi.org/10.1109/CVPR.2018.00984>`_
     """
-    def __init__(self, ray_trafo, hyper_params=None, callback=None, callback_func=None, callback_func_interval=100, **kwargs):
+
+    def __init__(self, ray_trafo, hyper_params=None, callback=None,
+                 callback_func=None, callback_func_interval=100, **kwargs):
         """
         Parameters
         ----------
@@ -76,6 +79,7 @@ class DeepImagePriorReconstructor(IterativeReconstructor):
 
     def _reconstruct(self, observation, *args, **kwargs):
         torch.random.manual_seed(10)
+
         lr = self.hyper_params['lr']
         gamma = self.hyper_params['gamma']
         scales = self.hyper_params['scales']
@@ -84,16 +88,17 @@ class DeepImagePriorReconstructor(IterativeReconstructor):
         skip_channels = self.hyper_params['skip_channels']
         loss_function = self.hyper_params['loss_function']
 
-
         output_depth = 1
         input_depth = 1
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-        self.net_input = 0.1 * torch.randn(input_depth, *self.reco_space.shape)[None].to(device)
-        self.model = get_skip_model(input_depth,
-                                    output_depth,
-                                    channels=channels[:scales],
-                                    skip_channels=skip_channels[:scales]).to(device)
+        self.net_input = 0.1 * \
+            torch.randn(input_depth, *self.reco_space.shape)[None].to(device)
+        self.model = get_skip_model(
+            input_depth,
+            output_depth,
+            channels=channels[:scales],
+            skip_channels=skip_channels[:scales]).to(device)
 
         self.optimizer = Adam(self.model.parameters(), lr=lr)
 
@@ -111,14 +116,18 @@ class DeepImagePriorReconstructor(IterativeReconstructor):
 
         best_loss = np.infty
         best_output = self.model(self.net_input).detach()
+        # scheduler = StepLR(self.optimizer, 500, 0.5)
 
-        for i in range(iterations):
+        for i in tqdm(range(iterations), total=iterations):
             self.optimizer.zero_grad()
             output = self.model(self.net_input)
-            loss = criterion(self.ray_trafo_module(output), y_delta) + gamma * tv_loss(output)
+            loss = criterion(self.ray_trafo_module(output),
+                             y_delta) + gamma * tv_loss(output)
             loss.backward()
             torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1)
             self.optimizer.step()
+            # scheduler.step()
+
             for p in self.model.parameters():
                 p.data.clamp_(MIN, MAX)
 
@@ -127,10 +136,11 @@ class DeepImagePriorReconstructor(IterativeReconstructor):
                 best_output = output.detach()
 
             if (i % self.callback_func_interval == 0 or i == iterations-1) and self.callback_func is not None:
-                self.callback_func(iteration=i, reconstruction=best_output[0, 0, ...].cpu().numpy(), loss=best_loss)
+                self.callback_func(
+                    iteration=i, reconstruction=best_output[0, 0, ...].cpu().numpy(), loss=best_loss)
 
             if self.callback is not None:
-                self.callback(self.reco_space.element(best_output[0, 0, ...].cpu().numpy()))
+                self.callback(self.reco_space.element(
+                    best_output[0, 0, ...].cpu().numpy()))
 
         return self.reco_space.element(best_output[0, 0, ...].cpu().numpy())
-

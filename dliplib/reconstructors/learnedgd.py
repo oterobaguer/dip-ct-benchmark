@@ -176,10 +176,7 @@ class LearnedGDReconstructor(BaseLearnedReconstructor):
     #                                          lr=self.lr, alpha=0.9)
 
     # def init_scheduler(self, dataset_train):
-    #     self.scheduler = torch.optim.lr_scheduler.LambdaLR(
-    #         self.optimizer,
-    #         lambda epoch:
-    #             1./(1. + epoch * self.hyper_params['lr_time_decay_rate']))
+    #     self.scheduler = None
 
     # def init_scheduler(self, dataset_train):
     #     self.scheduler = None

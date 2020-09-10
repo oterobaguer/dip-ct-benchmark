@@ -1,0 +1,6 @@
+ResultTable(results=
+                                reconstructor               test_data                     measure_values                                                                                                                                       misc
+task_ind sub_task_ind                                                                                                                                                                                                                              
+0        0             IRadonMapReconstructor  validation part 0:3522   mean: {psnr: 33.3, ssim: 0.8299}  {'hp_choice': {'scales': 5, 'skip_channels': 4, 'batch_size': 32, 'epochs': 30, 'fully_learned': True, 'lr': 0.01, 'use_sigmoid': False}}
+         1             IRadonMapReconstructor  validation part 0:3522  mean: {psnr: 33.47, ssim: 0.8322}   {'hp_choice': {'scales': 5, 'skip_channels': 4, 'batch_size': 32, 'epochs': 30, 'fully_learned': True, 'lr': 0.01, 'use_sigmoid': True}}
+)

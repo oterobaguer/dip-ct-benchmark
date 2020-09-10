@@ -1,0 +1,5 @@
+{
+    "gamma": 0.000774263682681127,
+    "iterations": 5000,
+    "loss_function": "mse"
+}

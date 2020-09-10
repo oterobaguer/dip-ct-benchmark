@@ -1,0 +1,12 @@
+{
+    "scales": 5,
+    "skip_channels": 4,
+    "channels": [32, 32, 64, 64, 128, 128],
+    "batch_size": 32,
+    "epochs": 5000,
+    "lr": 0.01,
+    "filter_type": "Hann",
+    "frequency_scaling": 1.0,
+    "init_bias_zero": true,
+    "scheduler": "base"
+}

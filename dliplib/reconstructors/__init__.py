@@ -9,7 +9,7 @@ from dliplib.reconstructors.fbpunet import FBPUNetReconstructor
 from dliplib.reconstructors.iradonmap import IRadonMapReconstructor
 from dliplib.reconstructors.learnedgd import LearnedGDReconstructor
 from dliplib.reconstructors.learnedpd import LearnedPDReconstructor
-from dliplib.reconstructors.tv import TVReconstructor
+from dliplib.reconstructors.tv import TVReconstructor, TVAdamReconstructor
 from dliplib.utils import Params
 from dliplib.utils.helper import load_standard_dataset
 from dliplib.utils.weights import load_weights
@@ -18,10 +18,78 @@ from dliplib.utils.weights import load_weights
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-def fbpunet_reconstructor(dataset='ellipses', size_part=1.0, pretrained=True, name=None):
+def get_reconstructor(method, dataset='ellipses', size_part=1.0,
+                      pretrained=True, name=None):
+    """Returns a reconstructor with hyperparameters/weights for the given
+    dataset
+    """
+    if method == 'fbpunet':
+        return fbpunet_reconstructor(
+            dataset=dataset,
+            size_part=size_part,
+            pretrained=pretrained,
+            name=name)
+
+    if method == 'learnedpd':
+        return learnedpd_reconstructor(
+            dataset=dataset,
+            size_part=size_part,
+            pretrained=pretrained,
+            name=name)
+
+    if method == 'learnedgd':
+        return learnedgd_reconstructor(
+            dataset=dataset,
+            size_part=size_part,
+            pretrained=pretrained,
+            name=name)
+
+    if method == 'iradonmap':
+        return iradonmap_reconstructor(
+            dataset=dataset,
+            size_part=size_part,
+            pretrained=pretrained,
+            name=name)
+
+    if method == 'learnedpd_dip':
+        return learnedpd_dip_reconstructor(
+            dataset=dataset,
+            size_part=size_part,
+            name=name)
+
+    if method == 'fbp':
+        return fbp_reconstructor(
+            dataset=dataset,
+            name=name)
+
+    if method == 'tv':
+        return tv_reconstructor(
+            dataset=dataset,
+            name=name)
+
+    if method == 'tvadam':
+        return tvadam_reconstructor(
+            dataset=dataset,
+            name=name)
+
+    if method == 'dip':
+        return tv_reconstructor(
+            dataset=dataset,
+            name=name)
+
+    if method == 'diptv':
+        return diptv_reconstructor(
+            dataset=dataset,
+            name=name)
+    return None
+
+
+def fbpunet_reconstructor(dataset='ellipses', size_part=1.0, pretrained=True,
+                          name=None):
     """
     :param dataset: Can be 'ellipses' or 'lodopab'
-    :param size_part: Can be one of: [0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0]
+    :param size_part: Can be one of: [0.001, 0.002, 0.005, 0.01, 0.02, 0.05,
+                      0.1, 0.2, 0.5, 1.0]
     :return: The FBP+UNet method trained on the specified dataset and size
     """
     try:
@@ -30,18 +98,20 @@ def fbpunet_reconstructor(dataset='ellipses', size_part=1.0, pretrained=True, na
         if name is None:
             name = 'FBP+UNet ({} $\%$)'.format(100 * size_part)
 
-
         reconstructor = FBPUNetReconstructor(standard_dataset.ray_trafo,
                                              hyper_params=params.dict,
                                              name=name)
         if pretrained:
-            load_weights(reconstructor, '{}_fbpunet_{}'.format(dataset, size_part))
+            load_weights(reconstructor, '{}_fbpunet_{}'.format(
+                dataset, size_part))
         return reconstructor
     except Exception as e:
-        raise Exception('The reconstructor has not been trained with the selected data_size')
+        raise Exception(
+            'The reconstructor does not exist for the selected data_size')
 
 
-def learnedpd_reconstructor(dataset='ellipses', size_part=1.0, pretrained=True, name=None):
+def learnedpd_reconstructor(dataset='ellipses', size_part=1.0, pretrained=True,
+                            name=None):
     """
     :param dataset: Can be 'ellipses' or 'lodopab'
     :param size_part: Can be one of: [0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0]
@@ -56,10 +126,12 @@ def learnedpd_reconstructor(dataset='ellipses', size_part=1.0, pretrained=True, 
                                                hyper_params=params.dict,
                                                name=name)
         if pretrained:
-            load_weights(reconstructor, '{}_learnedpd_{}'.format(dataset, size_part))
+            load_weights(reconstructor, '{}_learnedpd_{}'.format(
+                dataset, size_part))
         return reconstructor
     except Exception as e:
-        raise Exception('The reconstructor has not been trained with the selected data_size')
+        raise Exception(
+            'The reconstructor has not been trained with the selected data_size')
 
 
 def learnedgd_reconstructor(dataset='ellipses', size_part=1.0, pretrained=True, name=None):
@@ -77,10 +149,12 @@ def learnedgd_reconstructor(dataset='ellipses', size_part=1.0, pretrained=True, 
                                                hyper_params=params.dict,
                                                name=name)
         if pretrained:
-            load_weights(reconstructor, '{}_learnedgd_{}'.format(dataset, size_part))
+            load_weights(reconstructor, '{}_learnedgd_{}'.format(
+                dataset, size_part))
         return reconstructor
     except Exception as e:
-        raise Exception('The reconstructor has not been trained with the selected data_size')
+        raise Exception(
+            'The reconstructor has not been trained with the selected data_size')
 
 
 def iradonmap_reconstructor(dataset='ellipses', size_part=1.0, pretrained=True, name=None):
@@ -97,17 +171,19 @@ def iradonmap_reconstructor(dataset='ellipses', size_part=1.0, pretrained=True, 
         coord_mat = None
         try:
             coord_mat = np.load(os.path.join(BASE_DIR, 'reconstructors',
-                                '{}_iradonmap_coord_mat.npy'.format(dataset)))
+                                             '{}_iradonmap_coord_mat.npy'.format(dataset)))
         except FileNotFoundError:
             pass
         reconstructor = IRadonMapReconstructor(standard_dataset.ray_trafo,
                                                hyper_params=params.dict,
                                                name=name, coord_mat=coord_mat)
         if pretrained:
-            load_weights(reconstructor, '{}_iradonmap_{}'.format(dataset, size_part))
+            load_weights(reconstructor, '{}_iradonmap_{}'.format(
+                dataset, size_part))
         return reconstructor
     except Exception as e:
-        raise Exception('The reconstructor has not been trained with the selected data_size')
+        raise Exception(
+            'The reconstructor has not been trained with the selected data_size')
 
 
 def dip_reconstructor(dataset='ellipses', name=None):
@@ -138,9 +214,17 @@ def diptv_reconstructor(dataset='ellipses', name=None):
         params = Params.load('{}_diptv'.format(dataset))
         if name is None:
             name = 'DIP + TV'
-        reconstructor = DeepImagePriorReconstructor(standard_dataset.ray_trafo,
-                                                    hyper_params=params.dict,
-                                                    name=name)
+
+        # fbp_params = Params.load('{}_fbp'.format(dataset))
+        # fbp_reco = FBPReconstructor(standard_dataset.ray_trafo,
+        #                             hyper_params=fbp_params.dict)
+
+        reconstructor = DeepImagePriorReconstructor(
+            ray_trafo=standard_dataset.ray_trafo,
+            # ini_reco=fbp_reco,
+            hyper_params=params.dict,
+            name=name)
+
         return reconstructor
     except Exception as e:
         raise Exception('The reconstructor doesn\'t exist')
@@ -203,6 +287,24 @@ def tv_reconstructor(dataset='ellipses', name=None):
         reconstructor = TVReconstructor(standard_dataset.ray_trafo,
                                         hyper_params=params.dict,
                                         name=name)
+        return reconstructor
+    except Exception as e:
+        raise Exception('The reconstructor doesn\'t exist')
+
+
+def tvadam_reconstructor(dataset='ellipses', name=None):
+    """
+    :param dataset: Can be 'ellipses' or 'lodopab'
+    :return: TV reconstructor for the specified dataset
+    """
+    try:
+        params = Params.load('{}_tvadam'.format(dataset))
+        standard_dataset = load_standard_dataset(dataset)
+        if name is None:
+            name = 'TV-Adam'
+        reconstructor = TVAdamReconstructor(standard_dataset.ray_trafo,
+                                            hyper_params=params.dict,
+                                            name=name)
         return reconstructor
     except Exception as e:
         raise Exception('The reconstructor doesn\'t exist')

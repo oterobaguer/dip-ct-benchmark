@@ -10,6 +10,9 @@ from warnings import warn
 from dival import get_standard_dataset
 from dival.datasets.dataset import Dataset
 from dival.config import CONFIG as DIVAL_CONFIG
+from odl.discr import nonuniform_partition
+from odl.tomo.geometry import Parallel2dGeometry
+from odl.tomo.operators import RayTransform
 
 
 try:
@@ -43,21 +46,41 @@ def select_hyper_best_parameters(results, measure='psnr'):
 
 
 def load_standard_dataset(dataset, impl=None, ordered=False):
+    """
+    Loads a Dival standard dataset.
+    :param dataset: Name of the standard dataset
+    :param impl: Backend for the Ray Transform
+    :param ordered: Whether to order by patient id for 'lodopab' dataset
+    :param angle_indices: Indices of the angles to include (default is all).
+    :return: Dival dataset.
+    """
     if impl is None:
         impl = 'astra_cpu'
         if torch.cuda.is_available():
             impl = 'astra_cuda'
+    kwargs = {'impl': impl}
     if dataset == 'ellipses':
-        return get_standard_dataset('ellipses', fixed_seeds=True, impl=impl)
-    else:
-        orig_dataset = get_standard_dataset(dataset, impl=impl)
-        if ordered:
-            idx = get_lodopab_idx_sorted_by_patient()
-            dataset = ReorderedDataset(orig_dataset, idx)
-            dataset.ray_trafo = orig_dataset.ray_trafo
-            return dataset
-        else:
-            return orig_dataset
+        kwargs['fixed_seeds'] = True
+    # we do not use 'sorted_by_patient' here in order to be transparent to
+    # `CachedDataset`, where a `ReorderedDataset` is handled specially
+    # if dataset == 'lodopab':
+        # kwargs['sorted_by_patient'] = ordered
+
+    dataset_name = dataset.split('_')[0]
+    dataset_out = get_standard_dataset(dataset_name, **kwargs)
+
+    if dataset == 'lodopab_200':
+        angles = list(range(0, 1000, 5))
+        dataset_out = AngleSubsetDataset(dataset_out, angles)
+
+    if dataset_name == 'lodopab' and ordered:
+        idx = get_lodopab_idx_sorted_by_patient()
+        dataset_ordered = ReorderedDataset(dataset_out, idx)
+        dataset_ordered.ray_trafo = dataset_out.ray_trafo
+        dataset_ordered.get_ray_trafo = dataset_out.get_ray_trafo
+        dataset_out = dataset_ordered
+
+    return dataset_out
 
 
 def extract_tensorboard_scalars(log_dir=None, save_as_npz=None):
@@ -147,6 +170,7 @@ class ReorderedDataset(Dataset):
             self.idx[part][index], part=part, out=out)
         return sample
 
+
 def get_lodopab_idx_sorted_by_patient():
     idx = {}
     for part in ('train', 'validation', 'test'):
@@ -156,3 +180,82 @@ def get_lodopab_idx_sorted_by_patient():
             dtype=np.int)
         idx[part] = np.argsort(ids, kind='stable')
     return idx
+
+
+class AngleSubsetDataset(Dataset):
+    def __init__(self, dataset, angle_indices, impl=None):
+        """
+        Parameters
+        ----------
+        dataset : `Dataset`
+            Basis CT dataset.
+            Requirements:
+                - sample elements are ``(observation, ground_truth)``
+                - :meth:`get_ray_trafo` gives corresponding ray transform.
+        angle_indices : array-like or slice
+            Indices of the angles to use from the observations.
+        impl : {``'skimage'``, ``'astra_cpu'``, ``'astra_cuda'``},\
+                optional
+            Implementation passed to :class:`odl.tomo.RayTransform` to
+            construct :attr:`ray_trafo`.
+        """
+        self.dataset = dataset
+        self.angle_indices = (angle_indices if isinstance(angle_indices, slice)
+                              else np.asarray(angle_indices))
+        self.train_len = self.dataset.get_len('train')
+        self.validation_len = self.dataset.get_len('validation')
+        self.test_len = self.dataset.get_len('test')
+        self.random_access = self.dataset.supports_random_access()
+        self.num_elements_per_sample = (
+            self.dataset.get_num_elements_per_sample())
+        orig_geometry = self.dataset.get_ray_trafo(impl=impl).geometry
+        apart = nonuniform_partition(
+            orig_geometry.angles[self.angle_indices])
+        self.geometry = Parallel2dGeometry(
+            apart=apart, dpart=orig_geometry.det_partition)
+        orig_shape = self.dataset.get_shape()
+        self.shape = ((apart.shape[0], orig_shape[0][1]), orig_shape[1])
+        self.space = (None, self.dataset.space[1])  # preliminary, needed for
+        # call to get_ray_trafo
+        self.ray_trafo = self.get_ray_trafo(impl=impl)
+        super().__init__(space=(self.ray_trafo.range, self.dataset.space[1]))
+
+    def get_ray_trafo(self, **kwargs):
+        """
+        Return the ray transform that matches the subset of angles specified to
+        the constructor via `angle_indices`.
+        """
+        return RayTransform(self.space[1], self.geometry, **kwargs)
+
+    def generator(self, part='train'):
+        for (obs, gt) in self.dataset.generator(part=part):
+            yield (self.space[0].element(obs[self.angle_indices]), gt)
+
+    def get_sample(self, index, part='train', out=None):
+        if out is None:
+            out = (True, True)
+        (out_obs, out_gt) = out
+        out_basis = (out_obs is not False, out_gt)
+        obs_basis, gt = self.dataset.get_sample(index, part=part,
+                                                out=out_basis)
+        if isinstance(out_obs, bool):
+            obs = (self.space[0].element(obs_basis[self.angle_indices])
+                   if out_obs else None)
+        else:
+            out_obs[:] = obs_basis[self.angle_indices]
+            obs = out_obs
+        return (obs, gt)
+
+    def get_samples(self, key, part='train', out=None):
+        if out is None:
+            out = (True, True)
+        (out_obs, out_gt) = out
+        out_basis = (out_obs is not False, out_gt)
+        obs_arr_basis, gt_arr = self.dataset.get_samples(key, part=part,
+                                                         out=out_basis)
+        if isinstance(out_obs, bool):
+            obs_arr = obs_arr_basis[:, self.angle_indices] if out_obs else None
+        else:
+            out_obs[:] = obs_arr_basis[:, self.angle_indices]
+            obs_arr = out_obs
+        return (obs_arr, gt_arr)

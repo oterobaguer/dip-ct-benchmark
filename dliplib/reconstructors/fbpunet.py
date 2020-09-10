@@ -37,11 +37,27 @@ class FBPUNetReconstructor(BaseLearnedReconstructor):
             'default': False,
             'retrain': True
         },
+        'init_bias_zero': {
+            'default': True,
+            'retrain': True
+        },
+        'lr': {
+            'default': 0.001,
+            'retrain': True
+        },
+        'scheduler': {
+            'default': 'cosine',
+            'choices': ['base', 'cosine'],  # 'base': inherit
+            'retrain': True
+        },
+        'lr_min': {  # only used if 'cosine' scheduler is selected
+            'default': 1e-4,
+            'retrain': True
+        }
     })
     """
     CT Reconstructor applying filtered back-projection followed by a
     postprocessing U-Net (cf. [1]_).
-
     References
     ----------
     .. [1] K. H. Jin, M. T. McCann, E. Froustey, et al., 2017,
@@ -51,9 +67,11 @@ class FBPUNetReconstructor(BaseLearnedReconstructor):
            <https://doi.org/10.1109/TIP.2017.2713099>`_
     """
 
-    def __init__(self, ray_trafo, filter_type=None, frequency_scaling=None, scales=None, epochs=None,
-                 batch_size=None, lr=None, skip_channels=None, num_data_loader_workers=8, use_cuda=True,
-                 show_pbar=True, fbp_impl='astra_cuda', hyper_params=None, **kwargs):
+    def __init__(self, ray_trafo, filter_type=None, frequency_scaling=None,
+                 scales=None, epochs=None, batch_size=None, lr=None,
+                 skip_channels=None, num_data_loader_workers=8, use_cuda=True,
+                 show_pbar=True, fbp_impl='astra_cuda', hyper_params=None,
+                 **kwargs):
         """
         Parameters
         ----------
@@ -100,56 +118,44 @@ class FBPUNetReconstructor(BaseLearnedReconstructor):
         if frequency_scaling is not None:
             self.frequency_scaling = frequency_scaling
             if kwargs.get('hyper_params', {}).get('frequency_scaling') is not None:
-                warn("hyper parameter 'frequency_scaling' overridden by constructor argument")
+                warn(
+                    "hyper parameter 'frequency_scaling' overridden by constructor argument")
 
         # TODO: update fbp_op when the hyper parameters change?
-        self.fbp_op = fbp_op(ray_trafo, filter_type=self.filter_type, frequency_scaling=self.frequency_scaling)
-
-    def get_skip_channels(self):
-        return self.hyper_params['skip_channels']
-
-    def set_skip_channels(self, skip_channels):
-        self.hyper_params['skip_channels'] = skip_channels
-
-    skip_channels = property(get_skip_channels, set_skip_channels)
-
-    def get_scales(self):
-        return self.hyper_params['scales']
-
-    def set_scales(self, scales):
-        self.hyper_params['scales'] = scales
-
-    scales = property(get_scales, set_scales)
-
-    def get_frequency_scaling(self):
-        return self.hyper_params['frequency_scaling']
-
-    def set_frequency_scaling(self, frequency_scaling):
-        self.hyper_params['frequency_scaling'] = frequency_scaling
-
-    frequency_scaling = property(get_frequency_scaling, set_frequency_scaling)
-
-    def get_filter_type(self):
-        return self.hyper_params['filter_type']
-
-    def set_filter_type(self, filter_type):
-        self.hyper_params['filter_type'] = filter_type
-
-    filter_type = property(get_filter_type, set_filter_type)
+        self.fbp_op = fbp_op(ray_trafo, filter_type=self.filter_type,
+                             frequency_scaling=self.frequency_scaling)
 
     def init_model(self):
-        self.fbp_op = fbp_op(self.ray_trafo, filter_type=self.filter_type, frequency_scaling=self.frequency_scaling)
+        self.fbp_op = fbp_op(self.ray_trafo, filter_type=self.filter_type,
+                             frequency_scaling=self.frequency_scaling)
         self.model = get_unet_model(scales=self.scales,
                                     skip=self.skip_channels,
-                                    channels=self.hyper_params['channels'],
-                                    use_sigmoid=self.hyper_params['use_sigmoid'])
+                                    channels=self.channels,
+                                    use_sigmoid=self.use_sigmoid)
+
+        if self.init_bias_zero:
+            def weights_init(m):
+                if isinstance(m, torch.nn.Conv2d):
+                    m.bias.data.fill_(0.0)
+            self.model.apply(weights_init)
+
         if self.use_cuda:
             self.model = nn.DataParallel(self.model).to(self.device)
+
+    def init_scheduler(self, dataset_train):
+        if self.scheduler.lower() == 'cosine':
+            self.scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
+                self.optimizer,
+                T_max=self.epochs,
+                eta_min=self.lr_min)
+        else:
+            super().init_scheduler(dataset_train)
 
     def _reconstruct(self, observation):
         self.model.eval()
         fbp = self.fbp_op(observation)
-        fbp_tensor = torch.from_numpy(np.asarray(fbp)[None, None]).to(self.device)
+        fbp_tensor = torch.from_numpy(
+            np.asarray(fbp)[None, None]).to(self.device)
         reco_tensor = self.model(fbp_tensor)
         reconstruction = reco_tensor.cpu().detach().numpy()[0, 0]
         return self.reco_space.element(reconstruction)

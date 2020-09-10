@@ -1,0 +1,7 @@
+{
+  "batch_size": 20,
+  "epochs": 1000,
+  "niter": 10,
+  "lr": 1e-5,
+  "init_frequency_scaling": 0.7
+}

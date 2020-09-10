@@ -1,5 +1,5 @@
 ResultTable(results=
-                              reconstructor        test_data                     measure_values misc
-task_ind sub_task_ind                                                                               
-0        0             FBP+UNet (0.01 $\%$)  test part 0:100  mean: {psnr: 31.33, ssim: 0.7597}   {}
+                              reconstructor test_data                     measure_values misc
+task_ind sub_task_ind                                                                        
+0        0             FBP+UNet (0.01 $\%$)      test  mean: {psnr: 31.36, ssim: 0.7727}   {}
 )

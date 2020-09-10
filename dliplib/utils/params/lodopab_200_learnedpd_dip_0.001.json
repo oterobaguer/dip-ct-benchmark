@@ -1,0 +1,11 @@
+{
+  "lr1": 0.0005,
+  "lr2": 1e-6,
+  "scales": 6,
+  "gamma": 3.0,
+  "channels": [128, 128, 128, 128, 128, 128],
+  "skip_channels": [0, 0, 0, 0, 4, 4],
+  "initial_iterations": 9500,
+  "iterations": 500,
+  "loss_function": "poisson"
+}

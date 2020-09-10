@@ -1,0 +1,44 @@
+ResultTable(results=
+                             reconstructor            test_data                     measure_values                                                                                     misc
+task_ind sub_task_ind                                                                                                                                                                      
+0        0             TVAdamReconstructor  validation part 0:4  mean: {psnr: 37.03, ssim: 0.9152}           {'hp_choice': {'gamma': 15.0, 'iterations': 2000, 'loss_function': 'poisson'}}
+         1             TVAdamReconstructor  validation part 0:4     mean: {psnr: 37, ssim: 0.9151}           {'hp_choice': {'gamma': 15.0, 'iterations': 2500, 'loss_function': 'poisson'}}
+         2             TVAdamReconstructor  validation part 0:4  mean: {psnr: 36.99, ssim: 0.9151}           {'hp_choice': {'gamma': 15.0, 'iterations': 3000, 'loss_function': 'poisson'}}
+         3             TVAdamReconstructor  validation part 0:4  mean: {psnr: 36.98, ssim: 0.9151}           {'hp_choice': {'gamma': 15.0, 'iterations': 3500, 'loss_function': 'poisson'}}
+         4             TVAdamReconstructor  validation part 0:4   mean: {psnr: 37.1, ssim: 0.9172}  {'hp_choice': {'gamma': 16.1111111111, 'iterations': 2000, 'loss_function': 'poisson'}}
+         5             TVAdamReconstructor  validation part 0:4  mean: {psnr: 37.07, ssim: 0.9171}  {'hp_choice': {'gamma': 16.1111111111, 'iterations': 2500, 'loss_function': 'poisson'}}
+         6             TVAdamReconstructor  validation part 0:4  mean: {psnr: 37.06, ssim: 0.9171}  {'hp_choice': {'gamma': 16.1111111111, 'iterations': 3000, 'loss_function': 'poisson'}}
+         7             TVAdamReconstructor  validation part 0:4  mean: {psnr: 37.05, ssim: 0.9171}  {'hp_choice': {'gamma': 16.1111111111, 'iterations': 3500, 'loss_function': 'poisson'}}
+         8             TVAdamReconstructor  validation part 0:4  mean: {psnr: 37.14, ssim: 0.9186}  {'hp_choice': {'gamma': 17.2222222222, 'iterations': 2000, 'loss_function': 'poisson'}}
+         9             TVAdamReconstructor  validation part 0:4  mean: {psnr: 37.12, ssim: 0.9185}  {'hp_choice': {'gamma': 17.2222222222, 'iterations': 2500, 'loss_function': 'poisson'}}
+         10            TVAdamReconstructor  validation part 0:4   mean: {psnr: 37.1, ssim: 0.9185}  {'hp_choice': {'gamma': 17.2222222222, 'iterations': 3000, 'loss_function': 'poisson'}}
+         11            TVAdamReconstructor  validation part 0:4  mean: {psnr: 37.09, ssim: 0.9185}  {'hp_choice': {'gamma': 17.2222222222, 'iterations': 3500, 'loss_function': 'poisson'}}
+         12            TVAdamReconstructor  validation part 0:4  mean: {psnr: 37.17, ssim: 0.9196}  {'hp_choice': {'gamma': 18.3333333333, 'iterations': 2000, 'loss_function': 'poisson'}}
+         13            TVAdamReconstructor  validation part 0:4  mean: {psnr: 37.15, ssim: 0.9195}  {'hp_choice': {'gamma': 18.3333333333, 'iterations': 2500, 'loss_function': 'poisson'}}
+         14            TVAdamReconstructor  validation part 0:4  mean: {psnr: 37.13, ssim: 0.9195}  {'hp_choice': {'gamma': 18.3333333333, 'iterations': 3000, 'loss_function': 'poisson'}}
+         15            TVAdamReconstructor  validation part 0:4  mean: {psnr: 37.12, ssim: 0.9195}  {'hp_choice': {'gamma': 18.3333333333, 'iterations': 3500, 'loss_function': 'poisson'}}
+         16            TVAdamReconstructor  validation part 0:4  mean: {psnr: 37.18, ssim: 0.9202}  {'hp_choice': {'gamma': 19.4444444444, 'iterations': 2000, 'loss_function': 'poisson'}}
+         17            TVAdamReconstructor  validation part 0:4  mean: {psnr: 37.16, ssim: 0.9202}  {'hp_choice': {'gamma': 19.4444444444, 'iterations': 2500, 'loss_function': 'poisson'}}
+         18            TVAdamReconstructor  validation part 0:4  mean: {psnr: 37.15, ssim: 0.9202}  {'hp_choice': {'gamma': 19.4444444444, 'iterations': 3000, 'loss_function': 'poisson'}}
+         19            TVAdamReconstructor  validation part 0:4  mean: {psnr: 37.14, ssim: 0.9202}  {'hp_choice': {'gamma': 19.4444444444, 'iterations': 3500, 'loss_function': 'poisson'}}
+         20            TVAdamReconstructor  validation part 0:4  mean: {psnr: 37.19, ssim: 0.9206}  {'hp_choice': {'gamma': 20.5555555556, 'iterations': 2000, 'loss_function': 'poisson'}}
+         21            TVAdamReconstructor  validation part 0:4  mean: {psnr: 37.16, ssim: 0.9206}  {'hp_choice': {'gamma': 20.5555555556, 'iterations': 2500, 'loss_function': 'poisson'}}
+         22            TVAdamReconstructor  validation part 0:4  mean: {psnr: 37.15, ssim: 0.9205}  {'hp_choice': {'gamma': 20.5555555556, 'iterations': 3000, 'loss_function': 'poisson'}}
+         23            TVAdamReconstructor  validation part 0:4  mean: {psnr: 37.14, ssim: 0.9206}  {'hp_choice': {'gamma': 20.5555555556, 'iterations': 3500, 'loss_function': 'poisson'}}
+         24            TVAdamReconstructor  validation part 0:4  mean: {psnr: 37.18, ssim: 0.9208}  {'hp_choice': {'gamma': 21.6666666667, 'iterations': 2000, 'loss_function': 'poisson'}}
+         25            TVAdamReconstructor  validation part 0:4  mean: {psnr: 37.16, ssim: 0.9207}  {'hp_choice': {'gamma': 21.6666666667, 'iterations': 2500, 'loss_function': 'poisson'}}
+         26            TVAdamReconstructor  validation part 0:4  mean: {psnr: 37.15, ssim: 0.9208}  {'hp_choice': {'gamma': 21.6666666667, 'iterations': 3000, 'loss_function': 'poisson'}}
+         27            TVAdamReconstructor  validation part 0:4  mean: {psnr: 37.14, ssim: 0.9208}  {'hp_choice': {'gamma': 21.6666666667, 'iterations': 3500, 'loss_function': 'poisson'}}
+         28            TVAdamReconstructor  validation part 0:4  mean: {psnr: 37.17, ssim: 0.9208}  {'hp_choice': {'gamma': 22.7777777778, 'iterations': 2000, 'loss_function': 'poisson'}}
+         29            TVAdamReconstructor  validation part 0:4  mean: {psnr: 37.15, ssim: 0.9208}  {'hp_choice': {'gamma': 22.7777777778, 'iterations': 2500, 'loss_function': 'poisson'}}
+         30            TVAdamReconstructor  validation part 0:4  mean: {psnr: 37.13, ssim: 0.9208}  {'hp_choice': {'gamma': 22.7777777778, 'iterations': 3000, 'loss_function': 'poisson'}}
+         31            TVAdamReconstructor  validation part 0:4  mean: {psnr: 37.12, ssim: 0.9208}  {'hp_choice': {'gamma': 22.7777777778, 'iterations': 3500, 'loss_function': 'poisson'}}
+         32            TVAdamReconstructor  validation part 0:4  mean: {psnr: 37.15, ssim: 0.9207}  {'hp_choice': {'gamma': 23.8888888889, 'iterations': 2000, 'loss_function': 'poisson'}}
+         33            TVAdamReconstructor  validation part 0:4  mean: {psnr: 37.13, ssim: 0.9207}  {'hp_choice': {'gamma': 23.8888888889, 'iterations': 2500, 'loss_function': 'poisson'}}
+         34            TVAdamReconstructor  validation part 0:4  mean: {psnr: 37.12, ssim: 0.9207}  {'hp_choice': {'gamma': 23.8888888889, 'iterations': 3000, 'loss_function': 'poisson'}}
+         35            TVAdamReconstructor  validation part 0:4  mean: {psnr: 37.11, ssim: 0.9207}  {'hp_choice': {'gamma': 23.8888888889, 'iterations': 3500, 'loss_function': 'poisson'}}
+         36            TVAdamReconstructor  validation part 0:4  mean: {psnr: 37.13, ssim: 0.9206}           {'hp_choice': {'gamma': 25.0, 'iterations': 2000, 'loss_function': 'poisson'}}
+         37            TVAdamReconstructor  validation part 0:4  mean: {psnr: 37.11, ssim: 0.9205}           {'hp_choice': {'gamma': 25.0, 'iterations': 2500, 'loss_function': 'poisson'}}
+         38            TVAdamReconstructor  validation part 0:4  mean: {psnr: 37.09, ssim: 0.9205}           {'hp_choice': {'gamma': 25.0, 'iterations': 3000, 'loss_function': 'poisson'}}
+         39            TVAdamReconstructor  validation part 0:4  mean: {psnr: 37.09, ssim: 0.9205}           {'hp_choice': {'gamma': 25.0, 'iterations': 3500, 'loss_function': 'poisson'}}
+)

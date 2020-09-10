@@ -10,7 +10,7 @@ from dliplib.utils.reports import save_results_table
 
 # load data
 dataset = load_standard_dataset('ellipses')
-test_data = dataset.get_data_pairs('validation', 20)
+test_data = dataset.get_data_pairs('validation', 5)
 
 task_table = TaskTable()
 

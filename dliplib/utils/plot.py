@@ -25,8 +25,10 @@ def plot_reconstructions(reconstructions, titles,  ray_trafo, obs, gt, save_name
     psnrs = [PSNR(reco, gt) for reco in reconstructions]
     ssims = [SSIM(reco, gt) for reco in reconstructions]
 
-    l2_error0 = np.sqrt(np.sum(np.power(ray_trafo(gt).asarray() - obs.asarray(), 2)))
-    l2_error = [np.sqrt(np.sum(np.power(ray_trafo(reco).asarray() - obs.asarray(), 2))) for reco in reconstructions]
+    l2_error0 = np.sqrt(
+        np.sum(np.power(ray_trafo(gt).asarray() - obs.asarray(), 2)))
+    l2_error = [np.sqrt(np.sum(np.power(
+        ray_trafo(reco).asarray() - obs.asarray(), 2))) for reco in reconstructions]
 
     # plot results
     im, ax = plot_images([gt, ] + reconstructions, fig_size=fig_size, rect=(0.0, 0.0, 1.0, 1.0),
@@ -38,7 +40,7 @@ def plot_reconstructions(reconstructions, titles,  ray_trafo, obs, gt, save_name
     for j in range(len(reconstructions)):
         ax[j + 1].set_title(titles[j])
         ax[j + 1].set_xlabel('$\ell_2$ data error: {:.4f}\nPSNR: {:.1f}, SSIM: {:.2f}'
-                                .format(l2_error[j], psnrs[j], ssims[j]))
+                             .format(l2_error[j], psnrs[j], ssims[j]))
 
     ax[0].set_xlabel('$\ell_2$ data error: {:.2f}'.format(l2_error0))
 
@@ -66,25 +68,27 @@ def plot_reconstructors_tests(reconstructors, ray_trafo, test_data, save_name=No
 
         # compute reconstructions and psnr and ssim measures
         recos = [r.reconstruct(y_delta) for r in reconstructors]
-        l2_error = [np.sqrt(np.sum(np.power(ray_trafo(reco).asarray() - y_delta.asarray(), 2))) for reco in recos]
-        l2_error0 = np.sqrt(np.sum(np.power(ray_trafo(x).asarray() - y_delta.asarray(), 2)))
+        l2_error = [np.sqrt(np.sum(
+            np.power(ray_trafo(reco).asarray() - y_delta.asarray(), 2))) for reco in recos]
+        l2_error0 = np.sqrt(
+            np.sum(np.power(ray_trafo(x).asarray() - y_delta.asarray(), 2)))
 
         psnrs = [PSNR(reco, x) for reco in recos]
         ssims = [SSIM(reco, x) for reco in recos]
 
         # plot results
-        im, ax = plot_images([x, ] + recos, fig_size=fig_size, rect=(0.0, 0.0, 1.0, 1.0),
+        im, ax = plot_images([x, ] + recos, fig_size=fig_size, rect=(0.0, 0.0, 1.0, 1.0), ncols=4, nrows=-1,
                              xticks=[], yticks=[], vrange=(0.0, 0.9 * np.max(x.asarray())), cbar=False,
                              interpolation='none', cmap=cmap)
 
         # set labels
+        ax = ax.reshape(-1)
         ax[0].set_title('Ground Truth')
+        ax[0].set_xlabel('$\ell_2$ data error: {:.2f}'.format(l2_error0))
         for j in range(len(recos)):
             ax[j + 1].set_title(titles[j])
             ax[j + 1].set_xlabel('$\ell_2$ data error: {:.4f}\nPSNR: {:.1f}, SSIM: {:.2f}'
-                                    .format(l2_error[j], psnrs[j], ssims[j]))
-
-        ax[0].set_xlabel('$\ell_2$ data error: {:.2f}'.format(l2_error0))
+                                 .format(l2_error[j], psnrs[j], ssims[j]))
 
         plt.tight_layout()
         plt.tight_layout()
@@ -114,4 +118,3 @@ def plot_iterations(recos, iters, save_name=None, fig_size=(18, 4.5), cmap='pink
         plt.savefig('%s.pdf' % save_name)
 
     plt.show()
-

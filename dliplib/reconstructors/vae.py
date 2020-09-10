@@ -1,2 +1,0 @@
-class VariationalAutoEncoderReconstructor:
-    pass

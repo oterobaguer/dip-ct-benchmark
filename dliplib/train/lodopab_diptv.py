@@ -10,7 +10,7 @@ from dliplib.utils.reports import save_results_table
 
 # load data
 dataset = load_standard_dataset('lodopab')
-test_data = dataset.get_data_pairs('validation', 1)
+test_data = dataset.get_data_pairs('validation', 4)
 
 task_table = TaskTable()
 
@@ -32,7 +32,7 @@ task_table.append(reconstructor=reconstructor, measures=[PSNR, SSIM],
 
 results = task_table.run()
 
-save_results_table(results, 'lodopab_diptv----TV-NEW-ULTRA!')
+save_results_table(results, 'lodopab_diptv')
 
 # select the best hyper-parameters and save them
 best_choice, best_error = select_hyper_best_parameters(results)

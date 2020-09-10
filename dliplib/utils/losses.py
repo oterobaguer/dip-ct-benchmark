@@ -9,9 +9,9 @@ def tv_loss(x):
     ----------
     .. [1] https://en.wikipedia.org/wiki/Total_variation_denoising
     """
-    dh = torch.abs(x[:, :, :, 1:] - x[:, :, :, :-1])
-    dw = torch.abs(x[:, :, 1:, :] - x[:, :, :-1, :])
-    return torch.sum(dh[:, :, :-1, :] + dw[:, :, :, :-1])
+    dh = torch.abs(x[..., :, 1:] - x[..., :, :-1])
+    dw = torch.abs(x[..., 1:, :] - x[..., :-1, :])
+    return torch.sum(dh[..., :-1, :] + dw[..., :, :-1])
 
 
 def poisson_loss(y_pred, y_true, photons_per_pixel=4096, mu_max=3071*(20-0.02)/1000+20):

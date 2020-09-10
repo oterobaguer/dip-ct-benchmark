@@ -1,0 +1,5 @@
+{
+  "gamma": 20.555555555555557,
+  "iterations": 5000,
+  "loss_function": "poisson"
+}

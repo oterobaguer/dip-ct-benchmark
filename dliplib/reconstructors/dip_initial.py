@@ -4,8 +4,8 @@ from warnings import warn
 import torch
 import numpy as np
 
-from torch.optim import Adam
-from torch.nn import MSELoss
+from torch.optim import Adam, SGD
+from torch.nn import MSELoss, BCELoss
 
 from odl.contrib.torch import OperatorModule
 from dival import IterativeReconstructor
@@ -15,6 +15,10 @@ from dliplib.utils.models import get_skip_model
 
 torch.backends.cudnn.enabled = True
 torch.backends.cudnn.benchmark = True
+
+
+MIN = -1000
+MAX = 1000
 
 
 class DeepImagePriorInitialReconstructor(IterativeReconstructor):
@@ -93,13 +97,13 @@ class DeepImagePriorInitialReconstructor(IterativeReconstructor):
         y_delta = torch.from_numpy(np.asarray(observation)[None, None])
         y_delta = y_delta.to(device)
 
-        x0 = torch.tensor(self.ini_reco.reconstruct(observation).asarray(), dtype=torch.float32)
+        x0 = torch.tensor(self.ini_reco.reconstruct(
+            observation).asarray(), dtype=torch.float32)
         x0 = x0.view(1, 1, *x0.shape)
         x0 = x0.to(device)
 
-        noise = torch.randn(1, *self.reco_space.shape)[None].to(device)
-        noise_saved = noise.clone()
-
+        self.net_input = 0.1 * \
+            torch.randn(1, *self.reco_space.shape)[None].to(device)
         self.optimizer = Adam(self.model.parameters(), lr=lr1)
         mse = MSELoss()
 
@@ -108,21 +112,20 @@ class DeepImagePriorInitialReconstructor(IterativeReconstructor):
         best_model_wts = copy.deepcopy(self.model.state_dict())
 
         for i in range(initial_iterations):
-            self.net_input = noise_saved
             output = self.model(self.net_input)
             self.optimizer.zero_grad()
             loss = mse(output, x0)
-            torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1)
             loss.backward()
+            torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1)
             self.optimizer.step()
-
-            # current reconstruction
-            x_rec = output.detach().cpu().numpy()
 
             # call custom callback
             # TODO: remove this and use proper ODL callbacks
             if (i % self.callback_func_interval == 0 or i == initial_iterations-1) and self.callback_func:
-                self.callback_func(iteration=i, reconstruction=x_rec[0, 0, ...], loss=loss.item())
+                # current reconstruction
+                x_rec = output.detach().cpu().numpy()
+                self.callback_func(
+                    iteration=i, reconstruction=x_rec[0, 0, ...], loss=loss.item())
 
             # if the loss improved update the current best reconstruction
             # and save the model parameters
@@ -134,6 +137,10 @@ class DeepImagePriorInitialReconstructor(IterativeReconstructor):
         self.model.load_state_dict(best_model_wts)
         # restart optimizer
         self.optimizer = Adam(self.model.parameters(), lr=lr2, amsgrad=True)
+        # self.optimizer = SGD(self.model.parameters(), lr=lr2)
+
+        best_loss = np.infty
+        best_output = self.model(self.net_input).detach()
 
         if loss_function == 'mse':
             criterion = MSELoss()
@@ -143,17 +150,17 @@ class DeepImagePriorInitialReconstructor(IterativeReconstructor):
             warn('Unknown loss function, falling back to MSE')
             criterion = MSELoss()
 
-        best_loss = np.infty
-        best_output = self.model(self.net_input).detach()
-
         for i in range(iterations):
-            net_input = noise_saved
-            output = self.model(net_input)
+            output = self.model(self.net_input)
             self.optimizer.zero_grad()
-            loss = criterion(self.ray_trafo_module(output), y_delta) + gamma * tv_loss(output)
+            loss = criterion(self.ray_trafo_module(output),
+                             y_delta) + gamma * tv_loss(output)
             loss.backward()
             torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1)
             self.optimizer.step()
+
+            for p in self.model.parameters():
+                p.data.clamp_(MIN, MAX)
 
             # if the loss improved update the current best reconstruction
             if loss.item() < best_loss:
@@ -161,9 +168,11 @@ class DeepImagePriorInitialReconstructor(IterativeReconstructor):
                 best_output = output.detach()
 
             if (i % self.callback_func_interval == 0 or i == iterations - 1) and self.callback_func is not None:
-                self.callback_func(iteration=i, reconstruction=best_output[0, 0, ...].cpu().numpy(), loss=best_loss)
+                self.callback_func(
+                    iteration=i, reconstruction=best_output[0, 0, ...].cpu().numpy(), loss=best_loss)
 
             if self.callback is not None:
-                self.callback(self.reco_space.element(best_output[0, 0, ...].cpu().numpy()))
+                self.callback(self.reco_space.element(
+                    best_output[0, 0, ...].cpu().numpy()))
 
         return self.reco_space.element(best_output[0, 0, ...].cpu().numpy())
